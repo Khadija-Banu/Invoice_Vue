@@ -1,5 +1,8 @@
 <script setup>
     import { onMounted, ref } from 'vue';
+    import { useRouter } from 'vue-router'
+
+    const router = useRouter()
 
     let form = ref([])
     let allcustomers = ref([])
@@ -54,6 +57,35 @@
         })
         return total;
     }
+    const Total = () => {
+        return subTotal() - form.value.discount
+    }
+    const onSave = () => {
+        if(listCart.value.length>=1){
+            let subtotal = 0
+            subtotal = subTotal()
+
+            let total =0
+            total = Total()
+
+            const formData = new FormData()
+            formData.append('invoice_item',JSON.stringify(listCart.value))
+            formData.append('customer_id',customer_id.value)
+            formData.append('date',form.value.date)
+            formData.append('due_date',form.value.due_date)
+            formData.append('number',form.value.number)
+            formData.append('reference',form.value.reference)
+            formData.append('discount',form.value.discount)
+            formData.append('subtotal',subtotal)
+            formData.append('total',total)
+            formData.append('terms_and_condition',form.value.terms_and_condition)
+
+            axios.post("/api/add_invoice",formData)
+            listCart.value = []
+            router.push('/')
+
+        }
+    }
 
     onMounted(async () => {
         indexForm();
@@ -85,7 +117,7 @@
                     <p class="my-1">Customer</p>
                     <select name="" id="" class="input" v-model="customer_id">
                         <option disabled>Select customer</option>
-                        <option :value="customer_id" v-for="customer in allcustomers" :key="customer.id">{{ customer.firstname }}</option>
+                        <option :value="customer.id" v-for="customer in allcustomers" :key="customer.id">{{ customer.firstname }}</option>
                     </select>
                 </div>
                 <div>
@@ -146,11 +178,11 @@
                     </div>
                     <div class="table__footer--discount">
                         <p>Discount</p>
-                        <input type="text" class="input">
+                        <input type="text" class="input" v-model="form.discount">
                     </div>
                     <div class="table__footer--total">
                         <p>Grand Total</p>
-                        <span>$ 1200</span>
+                        <span>$ {{Total()}}</span>
                     </div>
                 </div>
             </div>
@@ -162,7 +194,7 @@
                 
             </div>
             <div>
-                <a class="btn btn-secondary">
+                <a class="btn btn-secondary" @click="onSave()">
                     Save
                 </a>
             </div>
