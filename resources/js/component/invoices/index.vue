@@ -3,7 +3,6 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
-
 export default {
   setup() {
     const router = useRouter();
@@ -29,15 +28,21 @@ export default {
     };
 
     const newInvoice = async () => {
-  try {
-    let form = await axios.get("/api/create_invoice");
-    console.log("form", form.data);
-    router.push("/invoice/new");
-  } catch (error) {
-    console.error("Error creating invoice:", error.response ? error.response.data : error.message);
-  }
-};
+      try {
+        let form = await axios.get("/api/create_invoice");
+        console.log("form", form.data);
+        router.push("/invoice/new");
+      } catch (error) {
+        console.error(
+          "Error creating invoice:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    };
 
+    const onShow = (id) => {
+      router.push('/invoice/show/'+id)
+    }
 
     onMounted(() => {
       getInvoices();
@@ -49,7 +54,8 @@ export default {
       searchInvoice,
       invoices,
       search,
-      newInvoice
+      newInvoice,
+      onShow,
     };
   },
 };
@@ -116,7 +122,7 @@ export default {
         <!-- item 1 -->
         <div v-if="invoices.length > 0">
           <div class="table--items" v-for="item in invoices" :key="item.id">
-            <a href="#" class="table--items--transactionId">#{{ item.id }}</a>
+            <a href="#" @click="onShow(item.id)">#{{ item.id }}</a>
             <p>{{ item.date }}</p>
             <p>#{{ item.number }}</p>
             <p v-if="item.customer">{{ item.customer.firstname }}</p>
