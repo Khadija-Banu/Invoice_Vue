@@ -1,5 +1,9 @@
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import axios from 'axios';
+import { onMounted, ref } from 'vue';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
 
     let form = ref({id:'' })
 
@@ -18,9 +22,17 @@
         window.print()
         router.push('/').catch(() => {})
     }
+    const onEdit = (id) => {
+      router.push('/invoice/edit/'+id)
+    }
+    const deleteInvoice = (id) => {
+      axios.get('/api/delete_invoice/'+id)
+      router.push('/')
+    }
 
     onMounted(() => {
       getInvoice();
+     
     
     });
 </script>
@@ -52,7 +64,7 @@
             </li>
             <li>
               <!-- Select Btn Option -->
-              <button class="selectBtnFlat">
+              <button class="selectBtnFlat" @click="onEdit(form.id)">
                 <i class="fas fa-reply"></i>
                 Edit
               </button>
@@ -60,7 +72,7 @@
             </li>
             <li>
               <!-- Select Btn Option -->
-              <button class="selectBtnFlat">
+              <button class="selectBtnFlat" @click="deleteInvoice(form.id)">
                 <i class="fas fa-pencil-alt"></i>
                 Delete
               </button>

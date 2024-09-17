@@ -6,6 +6,8 @@ import invoiceNew from '../component/invoices/new.vue'
 
 import invoiceShow from '../component/invoices/show.vue'
 
+import invoiceEdit from '../component/invoices/edit.vue'
+
 import notFound from '../component/NotFound.vue'
 
 const routes = [
@@ -22,6 +24,16 @@ const routes = [
         component: invoiceShow,
         props:true
     },
+    {
+        path:'/invoice/edit/:id',
+        component: invoiceEdit,
+        props:true
+    },
+    // {
+    //     path:'/invoice/delete_invoice/:id',
+    //     component: invoiceEdit,
+    //     props:true
+    // },
     {
         path:'/:pathMatch(.*)*',
         component: notFound
